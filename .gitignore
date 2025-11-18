@@ -1,0 +1,9 @@
+node_modules/
+*.log
+.env
+cookies.json
+resultado_*.json
+resumo_geral.json
+resultados.json
+test-*.js
+.DS_Store
