@@ -3,10 +3,16 @@ import chromium from '@sparticuz/chromium';
 import { config } from './config.js';
 
 export async function initBrowser() {
-  // Usa Chromium otimizado para serverless se disponível
+  // Usa Chromium otimizado para serverless
   const options = { ...config.puppeteerOptions };
   
-  if (process.env.RENDER) {
+  // Detecta ambiente de produção (Render ou similar)
+  const isProduction = process.env.NODE_ENV === 'production' || 
+                       process.env.RENDER || 
+                       !process.env.HOME?.includes('/home/');
+  
+  if (isProduction) {
+    console.log('🌐 Usando @sparticuz/chromium para produção');
     options.executablePath = await chromium.executablePath();
     options.args = chromium.args;
   }
