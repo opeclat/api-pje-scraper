@@ -1,8 +1,17 @@
 import puppeteer from 'puppeteer';
+import chromium from '@sparticuz/chromium';
 import { config } from './config.js';
 
 export async function initBrowser() {
-  const browser = await puppeteer.launch(config.puppeteerOptions);
+  // Usa Chromium otimizado para serverless se disponível
+  const options = { ...config.puppeteerOptions };
+  
+  if (process.env.RENDER) {
+    options.executablePath = await chromium.executablePath();
+    options.args = chromium.args;
+  }
+  
+  const browser = await puppeteer.launch(options);
   const page = await browser.newPage();
   
   // Configurações úteis

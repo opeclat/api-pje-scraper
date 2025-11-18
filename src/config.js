@@ -11,11 +11,12 @@ export const config = {
   
   // Configurações do Puppeteer
   puppeteerOptions: {
-    headless: true,  // Modo headless para produção
+    headless: true,
     defaultViewport: {
       width: 1920,
       height: 1080
     },
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/google-chrome-stable',
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
@@ -25,7 +26,9 @@ export const config = {
       '--disable-features=BlockInsecurePrivateNetworkRequests',
       '--disable-dev-shm-usage',
       '--disable-accelerated-2d-canvas',
-      '--disable-gpu'
+      '--disable-gpu',
+      '--single-process',
+      '--no-zygote'
     ],
     ignoreDefaultArgs: ['--enable-automation'],
     ignoreHTTPSErrors: true
