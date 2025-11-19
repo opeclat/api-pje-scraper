@@ -7,3 +7,4 @@ resumo_geral.json
 resultados.json
 test-*.js
 .DS_Store
+core.*
