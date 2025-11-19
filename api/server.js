@@ -96,18 +96,26 @@ app.post('/api/scrape/start', async (req, res) => {
     await page.type(config.selectors.login.otpField, otpCode);
     await page.click(config.selectors.login.otpSubmitButton);
     
-    await new Promise(resolve => setTimeout(resolve, 5000));
-    await page.reload({ waitUntil: 'networkidle2' });
+    console.log('⏳ Aguardando redirecionamento para aplicação PJE...');
     
-    const urlFinal = page.url();
-    const baseUrl = extractBaseUrl(urlFinal);
-    await page.goto(baseUrl, { waitUntil: 'networkidle2' });
+    // Aguarda até sair do domínio SSO e chegar no PJE
+    await page.waitForFunction(
+      () => !window.location.href.includes('sso.cloud.pje.jus.br'),
+      { timeout: 30000 }
+    );
     
-    // Aguarda estabilização completa da página após possíveis redirecionamentos
+    console.log(`📍 Redirecionado para: ${page.url()}`);
+    
+    // Aguarda a página carregar completamente
+    await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 30000 }).catch(() => {
+      console.log('⚠️  Timeout no waitForNavigation, continuando...');
+    });
+    
+    // Aguarda estabilização
     await new Promise(resolve => setTimeout(resolve, 3000));
     
     console.log('✅ Login completo');
-    console.log(`📍 URL atual: ${page.url()}`);
+    console.log(`📍 URL final: ${page.url()}`);
     
     // FASE 2: Navegação
     console.log('\n🧭 FASE 2: Navegação');
